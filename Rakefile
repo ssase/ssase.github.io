@@ -28,6 +28,7 @@ task :newpost, :title do |t, args|
     post.puts "# TAG names should always be lowercase"
     post.puts "author: max"
     post.puts "toc: false"
+    post.puts "comments: false"
     post.puts "math: false"
     post.puts "mermaid: false"
     post.puts "# Mermaid is a great diagram generation tool"
