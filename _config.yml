@@ -16,7 +16,7 @@ timezone: Asia/Shanghai
 
 title: Max's Zone # the main title
 
-tagline: happy wife happy life # it will display as the sub-title
+tagline: Learn something then write it down # it will display as the sub-title
 
 description: >- # used by seo meta and the atom feed
   A place where Max will write something fun.
@@ -122,6 +122,7 @@ baseurl: ""
 plugins:
     # Automatically adds a target="_blank" rel="noopener noreferrer" attribute to all external links in Jekyll's content plus several other automation features for the external links.
   - jekyll-target-blank
+  - jekyll-mermaid
 
 
 # ------------ The following options are not recommended to be modified ------------------
