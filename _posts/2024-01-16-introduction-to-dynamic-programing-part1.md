@@ -28,7 +28,7 @@ First, let's check out a problem [Climbing Stairs](https://leetcode.com/problems
 > You are climbing a staircase. It takes n steps to reach the top.
 Each time you can either climb 1 or 2 steps. In how many distinct ways can you climb to the top?
 
-Every time you can choose `1` or `2` steps, so it's natural to think of building a binary tree in which the two paths refer to 2 kinds of steps. We assume the number `n` is 3, then the tree can be illustrated as below.
+Every time you can choose **1** or **2** steps, so it's natural to think of building a binary tree in which the two paths refer to 2 kinds of steps. We assume the number **n** is 3, then the tree can be illustrated as below.
 
 ```mermaid
 stateDiagram-v2
@@ -40,7 +40,7 @@ stateDiagram-v2
     2.n=1 --> 3.n=0: step=1
 ```
 
-And now, it's easy to know that the answer is the number of the tree's leaves. So it can be written down as below.
+And now, it's easy to know that the answer is the number of the tree's leaves. Then it can be written down as below.
 
 ```c++
 int climbStairs(int n) {
@@ -60,17 +60,17 @@ void climbStairs(int n, int& count) {
 }
 ```
 
-But is it fast? Or can we figure its complexity out? As we all know, a complete binary tree's leaves's count denepns on its height, and we can easily to say it's $(2^{h+1} - 1)$ if we assume that the height of the root is 0. 
+But is it fast? Or can we figure its complexity out? As we all know, a complete binary tree's leaves's count depends on its height, and we can easily to say it's $(2^{h+1} - 1)$ if we assume that the height of the root is 0. 
 
 Though the tree is obvious not complete, it's still useful to calculate its leaves count treating it as complete, because we can use its highest height which all of its path is 1, and the least height which all of its path is 2. 
 
 Now it's apparent that the most count is $(2^n - 1)$ and the least count is $(2^{\frac{n}{2}} - 1)$, so the complexity is between $O(2^{\frac{n}{2}})$ and $O(2^n)$.
 
-And let's take a further step, assuming that `n` is an even number, can we say that the leaves count is $\frac{(2^{\frac{n}{2}} - 1) + (2^n - 1)}{2}$? You can prove it yourself.
+And let's take a further step, assuming that **n** is an even number, can we say that the leaves count is $\frac{(2^{\frac{n}{2}} - 1) + (2^n - 1)}{2}$? You can prove it yourself.
 
 But as we can see, it's too slow. Is there a faster algorithm?
 
-Let's take a look at the tree above, when we choose an `1-1` path or a `2` path, the rest parts which are 1 are the same, which means we calculate the same parts two times! Can we write down them at a notebook in case we run into them again? The answer is **YES**! We can use a function called `c(n)` to refer to the count of the distinct ways when we have `n` steps to climb, and it has this equation $c(n) = c(n-1) + c(n-2)$, then we can record the value of `c(n)` in an array `note`. Now we can write the code as below.
+Let's take a look at the tree above, when we choose an **1-1** path or a **2** path, the rest parts which are 1 are the same, which means we calculate the same parts two times! Can we write down them at a notebook in case we run into them again? The answer is *YES*! We can use a function called `c(n)` to refer to the count of the distinct ways when we have **n** steps to climb, and it has this equation $c(n) = c(n-1) + c(n-2)$, then we can record the value of `c(n)` in an array `note`. Now we can write the code as below.
 
 ```c++
 int climbStairs(int n) {
@@ -93,7 +93,7 @@ int climbStairs(int n, vector<int>& note) {
 
 It's fast, but how fast is it? Its structure just looks like the same as what it was when not using a notebook, how can we calculate the complexity?
 
-Let's consider the tree's leftest path, there are all `1` steps, and after the `climbStairs(n-1, note)` returns, the `note[n-2]` will have been known, so the `climbStairs(n-2, note)` will return immediately. So we can say the time this algorithm costs is $O(n)$. From $O(2^n)$ to $O(n)$, what a big improvement!
+Let's consider the tree's leftest path, there are all **1** steps, and after the `climbStairs(n-1, note)` returns, the `note[n-2]` will have been known, so the `climbStairs(n-2, note)` will return immediately. So we can say the time this algorithm costs is $O(n)$. From $O(2^n)$ to $O(n)$, what a big improvement!
 
 But is there any more enhancement? Do we have to use a recursive function, since it will cost more time and memory every time it calls itself? The answer is still YES.
 
@@ -111,6 +111,6 @@ int climbStairs(int n) {
 }
 ```
 
-So far, we solve the first problem using dynamic programing. So we can realize that it's important to find out a smaller part of the original problem, and use its result to deduce the bigger one's result. We call this smaller part of problem as `optimal substructure`. Then we can get a equation like $c(n) = c(n-1) + c(n-2)$ as we discussed above. Some more complicated problem may have mutiple arguments or be difficult to figure out `optimal substructure`. 
+So far, we solve the first problem using dynamic programing. So we can realize that it's important to find out a smaller part of the original problem, and use its result to deduce the bigger one's result. We call this smaller part of problem as **optimal substructure**. Then we can get a equation like $c(n) = c(n-1) + c(n-2)$ as we discussed above. Some more complicated problem may have mutiple arguments or be difficult to figure out **optimal substructure**. 
 
 To know more, you can read the part2.
