@@ -19,7 +19,7 @@ There have been a lot of instructions about how to set up a blog at github.io, b
 
 ## Run Your Blog Locally
 
-Whether for testing or fast speed to see what you've changed, it is recommended to run your blog locally, below is how to set up it.
+Whether for testing or to see what you've changed faster, it is recommended to run your blog locally, below is how to set up it.
 
 ### Install dependencies for jekyll
 
