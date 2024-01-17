@@ -60,17 +60,17 @@ void climbStairs(int n, int& count) {
 }
 ```
 
-But is it fast? Or can we figure its complexity out? As we all know, a complete binary tree's leaves's count depends on its height, and we can easily to say it's $(2^{h+1} - 1)$ if we assume that the height of the root is 0. 
+But is it fast? Or can we figure its complexity out? As we all know, a complete binary tree's leaves's count depends on its height, and we can easily to say it's $(2^h)$ if we assume that the height of the root is 0. 
 
-Though the tree is obvious not complete, it's still useful to calculate its leaves count treating it as complete, because we can use its highest height which all of its path is 1, and the least height which all of its path is 2. 
+Though the tree is obvious not complete, it's still useful to calculate its leaves count treating it as complete, because we can use its highest height which all of its path is **1** to get the upper boundary of the complexity and use its lowest height which all of its path is **2** to get the lower boundary of the complexity. 
 
-Now it's apparent that the most count is $(2^n - 1)$ and the least count is $(2^{\frac{n}{2}} - 1)$, so the complexity is between $O(2^{\frac{n}{2}})$ and $O(2^n)$.
+Now it's apparent that the most count is $(2^{n})$ and the least count is $(2^{\frac{n}{2}})$, so the complexity is between $O(2^{\frac{n}{2}})$ and $O(2^n)$.
 
-And let's take a further step, assuming that **n** is an even number, can we say that the leaves count is $\frac{(2^{\frac{n}{2}} - 1) + (2^n - 1)}{2}$? You can prove it yourself.
+And can you get an accurate complexity? Try it yourself!
 
-But as we can see, it's too slow. Is there a faster algorithm?
+But as we can see, it's too slow. Is there a faster way?
 
-Let's take a look at the tree above, when we choose an **1-1** path or a **2** path, the rest parts which are 1 are the same, which means we calculate the same parts two times! Can we write down them at a notebook in case we run into them again? The answer is *YES*! We can use a function called `c(n)` to refer to the count of the distinct ways when we have **n** steps to climb, and it has this equation $c(n) = c(n-1) + c(n-2)$, then we can record the value of `c(n)` in an array `note`. Now we can write the code as below.
+Let's take a look at the tree above, when we choose an **1-1** path or a **2** path, the rest parts which are 1 are the same, which means we calculate the same parts two times! Can we write down them at a notebook in case we run into them again? The answer is *YES*! We can use a function called `c(n)` to refer to the count of the distinct ways when we have **n** steps to climb, and it has this equation $c(n) = c(n-1) + c(n-2)$, then we can record the value of `c(n)` in an array **note**. Now we can write the code as below.
 
 ```c++
 int climbStairs(int n) {
