@@ -16,7 +16,7 @@ timezone: Asia/Shanghai
 
 title: Max's Zone # the main title
 
-tagline: Learn something then write it down # it will display as the sub-title
+tagline: Practice makes perfect. # it will display as the sub-title
 
 description: >- # used by seo meta and the atom feed
   A place where Max will write something fun.

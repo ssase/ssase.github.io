@@ -3,7 +3,7 @@ layout: post
 title: "Introduction to Dynamic Programing Part1"
 date: 2024-01-16 15:48:39 +0800
 published: true
-categories: [Algorithm]
+categories: [Algorithm, Dynamic Programing]
 tags: [dynamic programing]
 # The categories of each post are designed to contain up to two elements, and the number of elements in tags can be zero to infinity. 
 # TAG names should always be lowercase

@@ -1,9 +1,9 @@
 ---
 layout: post
-title: "Set up your blog at github.io"
+title: "Set Up Your Blog At Github.io"
 date: 2024-01-15 08:30:28 +0800
 published: true
-categories: [Tutorial]
+categories: [Tutorial, Blog]
 tags: [ruby, jekyll, gitHub pages]
 # The categories of each post are designed to contain up to two elements, and the number of elements in tags can be zero to infinity. 
 # TAG names should always be lowercase
