@@ -2,7 +2,7 @@
 layout: post
 title: "Dive Into Objective-C Part1 Class"
 date: 2024-01-20 14:16:09 +0800
-published: false
+published: true
 categories: [Source Analysis, Objective-C]
 tags: [objective-C, runtime]
 # The categories of each post are designed to contain up to two elements, and the number of elements in tags can be zero to infinity. 
@@ -202,10 +202,11 @@ This picture tells us:
 
 ## What's In A Class
 
-If you read the code above carefully enough, you will find it mentions that:
+If you read the code above carefully, you will find it mentions that:
+
 > Instance methods and instance variables should be added to the class itself. Class methods should be added to the metaclass.
 
-So, storing **class method** is what **meta class** used for. Let's continue our journey to explore how **class** stores **instance methods** and **instance variables** and how **meta class** stores **class methods**.
+So, storing **class method** is what **meta class** used for. Let's continue our journey to explore how **class** stores **instance variables** and **instance methods** and how **meta class** stores **class methods**.
 
 ### Instance Variable & Property
 
@@ -282,14 +283,16 @@ struct ivar_t {
 
 We can know from the code that:
 - The **instance variables** are stored in a **class**'s `class_data_bits_t` structure whose name is `bits` in `objc_class`.
-- When we read or write **instance variables**, we do not use `.` or `->` symbols, because they are not stored like a `struct` does, instead, we use `ivar_t`'s `offset` to read or write.
-- `offset = (offset + alignMask) & ~alignMask;` This line is for memory alignment. Let's assume `offset` is 0x12, and now if we want to add a 4 bytes data such as `int`, the `alignMask` is 0x3, so the value of `(offset + alignMask)` is 0x15, and new value of `offset` is 0x14 which meets the requirement. This is a smart way to get an alignment offset.
+- When we read or write **instance variables**, we do not use `.` or `->`, because they are not stored like a `struct`, instead, we use `ivar_t`'s `offset` to read or write.
+- `offset = (offset + alignMask) & ~alignMask;` This line is for memory alignment. Assume `offset` is 0x12, and now if we want to add a 4 bytes data such as `int`, the `alignMask` is 0x3, so the value of `(offset + alignMask)` is 0x15, and new value of `offset` is 0x14 which meets the requirement. This is a smart way to get an alignment offset.
 
-As we all know, we use a `class`'s property to manipulate data stored in an instance instead of using its variable directly. Let's take a look at the code about `property`.
+You might want to say, we never use `offset` to `get` or `set` a `instance`'s variables. Instead, we use its property to manipulate data stored in an **instance**. Let's take a look at the code about `property`.
 
 ```c++
 // Adds a property to a class.
-static bool _class_addProperty(Class cls, const char *name, const objc_property_attribute_t *attrs, unsigned int count, bool replace)
+static bool _class_addProperty(Class cls, const char *name,
+                    const objc_property_attribute_t *attrs,
+                    unsigned int count, bool replace)
 {
     // Omit somrthing unimportant
 
@@ -303,21 +306,97 @@ static bool _class_addProperty(Class cls, const char *name, const objc_property_
     proplist->begin()->name = strdupIfMutable(name);
     proplist->begin()->attributes = copyPropertyAttributeString(attrs, count);
 
-    rwe->properties.attachLists(&proplist, 1, /*preoptimized*/false, PrintPreopt ? "properties" : nullptr);
+    rwe->properties.attachLists(&proplist, 1, /*preoptimized*/false,
+                            PrintPreopt ? "properties" : nullptr);
 
     return YES;
 }
-
 ```
 
-We can get some information from the code above:
-- The property is also stored in `bits` 
+So, the property is also stored in `bits`.
+
+Let's call a `getter` to help explain the property.
+
+```objectivec
+@interface Animal
+@property char *type;
+@property (getter=getNum) int num;
+- (void)shout;
+@end
+
+@implementation Animal
+- (void)shout { self.num; }
+@end
+```
+
+When we call an **instance**'s property, like `someInstance.someProperty`, using `self.num` as an example, which is in `animal.m`'s `shout` method, the complier will change it to `((int (*)(id, SEL))(void *)objc_msgSend)((id)self, sel_registerName("getNum"))` written in `animal.cpp`.
+
+So, the meaning of property is to tell the **runtime** to add an **instance variable** to the **class**, and generate a `getter` and a `setter` for us, when we call the property with **dot** symbol, we are actually sending a message to the instance, and the property saves the information about what message to send exactly.
+
+Besides the role above, due to the property's manifold **attributes** (you can get more information about its attributes [here](https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/ObjCRuntimeGuide/Articles/ocrtTypeEncodings.html#//apple_ref/doc/uid/TP40008048-CH100-SW1)), it also help us with memory management and multiple thread atomic.
 
 ### Class Variable
 
+Since we use `static` to indicate a variable to be a class's `class variable` directly, there is no need to store `class variable` in a class.
+
 ### Instance Method
 
+```c++
+BOOL class_addMethod(Class cls, SEL name, IMP imp, const char *types)
+{
+    if (!cls) return NO;
+
+    mutex_locker_t lock(runtimeLock);
+    return ! addMethod(cls, name, imp, types ?: "", NO);
+}
+
+static IMP addMethod(Class cls, SEL name, IMP imp, const char *types, bool replace)
+{
+    IMP result = nil;
+
+    // Omit something unimportant
+
+    // fixme optimize
+    method_list_t *newlist = method_list_t::allocateMethodList(1, fixed_up_method_list);
+
+#if TARGET_OS_EXCLAVEKIT
+    auto &first = newlist->begin()->bigStripped();
+#else
+    auto &first = newlist->begin()->bigSigned();
+#endif
+    first.name = name;
+    first.types = strdupIfMutable(types);
+    first.imp = imp;
+
+    addMethods_finish(cls, newlist);
+    result = nil;
+
+    return result;
+}
+
+static void addMethods_finish(Class cls, method_list_t *newlist)
+{
+    auto rwe = cls->data()->extAllocIfNeeded();
+
+    if (newlist->count > 1)
+        newlist->sortBySELAddress();
+
+    prepareMethodLists(cls, &newlist, 1, NO, NO, __func__);
+    rwe->methods.attachLists(&newlist, 1, /*preoptimized*/false, PrintPreopt ? "methods" : nullptr);
+
+    // If the class being modified has a constant cache,
+    // then all children classes are flattened constant caches
+    // and need to be flushed as well.
+    flushCaches(cls, __func__, [](Class c){
+        // constant caches have been dealt with in prepareMethodLists
+        // if the class still is constant here, it's fine to keep
+        return !c->cache.isConstantOptimizedCache();
+    });
+}
+```
+
 ### Class Method
+
 
 ### Category
 

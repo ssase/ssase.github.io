@@ -113,4 +113,4 @@ int climbStairs(int n) {
 
 So far, we solve the first problem using dynamic programing. So we can realize that it's important to find out a smaller part of the original problem, and use its result to deduce the bigger one's result. We call this smaller part of problem as **optimal substructure**. Then we can get a equation like $c(n) = c(n-1) + c(n-2)$ as we discussed above. Some more complicated problem may have mutiple arguments or be difficult to figure out **optimal substructure**. 
 
-To know more, you can read the part2.
+To know more, you may want to read the part2.
