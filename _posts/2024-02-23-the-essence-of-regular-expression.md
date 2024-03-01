@@ -156,10 +156,10 @@ So, $N_1$ can be defined as $(Q, \Sigma, \delta, q_0, F)$, and:
 |$q_1$|$\{q_2\}$|$\{q_1, q_2\}$|$\{q_2\}$|
 |$q_2$|$\varnothing$|$\varnothing$|$\varnothing$|
 
-4. $q_1$ is a **start state**
+4. $q_0=\{q_1\}$
 5. $F = \{q_2\}$
 
-### Connection Between DFA and NFA
+### Relationship Between DFA and NFA
 
 > **THEOREM 1**: Given an *NFA*, we can always find a *DFA* which is able to recognize the same language.
 
@@ -167,13 +167,13 @@ Since the result of an *NFA*'s $\delta$ is one of the sets in $P(Q)$, we can tre
 
 Assuming an *NFA* 5-tuple is $(Q_1, \Sigma_1, \delta_1, q_1, F_1)$, then we can construct a *DFA* 5-tuple $(Q_2, \Sigma_2, \delta_2, q_2, F_2)$ like this:
 
-1. $Q_2 = P(Q)$
+1. $Q_2 = P(Q_1)$
 2. $\Sigma_2 = \Sigma_1$
-3. If the result of $\delta_1(q,a)$ in *NFA* is *r*($r\subseteq Q$), then we can deduce the result of $\delta_2(\{q\},a)$ is a single state which is equal to *r*. In addition, if 
+3. For $A \subseteq Q_2\ and\ r \in \Sigma_2,\ \delta_2(A,r) =  \underset {a\in A} \cup \delta_1(a,r)$, which means for each $a \in A$, first we get $S = \delta_1(a,r)$, then we will have these sets: $S_1,S_2\cdots S_n(n=|A|)$, in the end, we get the result $S = \{a\ |\ a\in S_1\ or\ a\in S_2 \cdots \ or\ a\in S_n\}$
 4. $q_2 = \{q_1\}$
-5. $F_2 = \{A\ |\ A \subseteq F\ and\ A \neq \varnothing \}$
+5. $F_2 = \{A\ |\ A \subseteq Q_2\ and\ at\ least\ one\  a\in A,\ a\in F_1 \}$
 
-By now, we can try to dig out the essence of regular expression.
+However, we haven't discussed $\varepsilon$ above, when we calculate $\delta_2$, assuming the result is **S**, we neet to consider every $a \in S$, if $A=\delta_1(a,\varepsilon)\ and\ A\neq \varnothing$, then we ought to take all $a^, \in$ these $A$ into the result $S$, and also, considering $A^, =\delta_1(a^, ,\varepsilon)$ still matters. We should do these same steps until there's no more $A\neq \varnothing$.
 
 ## Dive Into Regular Expression
 
@@ -205,7 +205,7 @@ As a mathematic operation's result is also a number, we need to prove a regular 
 
 [TODO: 链接到DFA那一段]
 
-As we discussed in **DFA**, we know that there is a $M_1$ and a $M_2$ can recognize $A_1$ and $A_2$ separately, since we want to prove that *$A_1 \cup A_2$ is a regular language*, then we need to prove that *there is a $M$ can recognize $A_1 \cup A_2$*.
+As we discussed in **DFA**, we know that there is a $M_1$ and a $M_2$ can recognize $A_1$ and $A_2$ separately, since we want to prove that *$A_1 \cup A_2$ is a regular language*, then we need to prove that *there is a $M$ who can recognize $A_1 \cup A_2$*.
 
 Let's define $M_1$ as $(Q_1, \Sigma_1, \delta_1, q_1, F_1)$, $M_2$ as $(Q_2, \Sigma_2, \delta_2, q_2, F_2)$ and $M$ as $(Q, \Sigma, \delta, q_0, F)$, then we can figure $M$ out as below:
 1. $Q = \{(r_1, r_2)\ |\ r1\in Q_1 \ and \ r_2 \in Q_2\}$
