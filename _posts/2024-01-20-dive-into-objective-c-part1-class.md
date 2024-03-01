@@ -35,7 +35,7 @@ Target: x86_64-pc-linux-gnu
 
 It would be better if your system is MacOS, because you can get executable `Objective-C` **runtime** from [here](https://github.com/internetWei/ObjCRuntimes.git), so that you can play around with it.
 
-## What Is A Class Essentially
+## What Is a Class Essentially
 
 First, let's figure out what is a class in Objective-C. You can create a file *animal.m*, and write some codes in it as below:
 
@@ -200,7 +200,7 @@ This picture tells us:
 - The `isa` of a **class** is its **meta class**.
 - Both **class** and **meta class** have their **super class**.
 
-## What's In A Class
+## What's in a Class
 
 If you read the code above carefully, you will find it mentions that:
 

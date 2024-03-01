@@ -18,7 +18,7 @@ mermaid: true
 
 ## Introduction to Regular Expression
 
-### What is Regualar Expression
+### What Is Regualar Expression
 
 As a developer, we may be more or less familiar with **regular expression**(also known as **regex** or **regexp**). It is a way to decribe a string pattern with which we can tell whether a string is needed or locate a special piece of text in an article.
 
@@ -173,7 +173,7 @@ Assuming an *NFA* 5-tuple is $(Q_1, \Sigma_1, \delta_1, q_1, F_1)$, then we can 
 4. $q_2 = \{q_1\}$
 5. $F_2 = \{A\ |\ A \subseteq Q_2\ and\ at\ least\ one\  a\in A,\ a\in F_1 \}$
 
-However, we haven't discussed $\varepsilon$ above, when we calculate $\delta_2$, assuming the result is **S**, we neet to consider every $a \in S$, if $A=\delta_1(a,\varepsilon)\ and\ A\neq \varnothing$, then we ought to take all $a^, \in$ these $A$ into the result $S$, and also, considering $A^, =\delta_1(a^, ,\varepsilon)$ still matters. We should do these same steps until there's no more $A\neq \varnothing$.
+However, we haven't discussed about $\varepsilon$ above, when we calculate $\delta_2$, assuming the result is **S**, we neet to consider every $a \in S$, if $A=\delta_1(a,\varepsilon)\ and\ A\neq \varnothing$, then we ought to take all $a^, \in$ these $A$ into the result $S$, and also, considering $A^, =\delta_1(a^, ,\varepsilon)$ still matters. We should do these same steps until there's no more $A\neq \varnothing$.
 
 ## Dive Into Regular Expression
 

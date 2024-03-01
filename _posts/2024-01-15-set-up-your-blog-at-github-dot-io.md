@@ -21,7 +21,7 @@ There have been a lot of instructions about how to set up a blog at github.io, b
 
 Whether for testing or to see what you've changed faster, it is recommended to run your blog locally, below is how to set up it.
 
-### Install dependencies for jekyll
+### Install Dependencies for Jekyll
 
 My system is Ubuntu-22.04.3, if yours is mac, windows or other linux, here is the place for you to get more information [Jekyll Docs: installation](https://jekyllrb.com/docs/installation/).
 
@@ -79,7 +79,7 @@ I fixed it by adding this line to `.zshrc`.
 export PATH=$PATH:/home/YOUR_USER_NAME/.local/share/gem/ruby/3.0.0/bin
 ```
 
-### Choose a jekyll theme
+### Choose a Jekyll Theme
 
 You can pick up a theme from here [Jekyll Theme](https://jekyllrb.com/docs/themes/).
 
@@ -87,7 +87,7 @@ Or just generate a default theme using `jekyll new YOUR_BLOG_NAME`
 
 Visit [Jekyll Doc](https://jekyllrb.com/docs/) for more information.
 
-## Set up your blog at github.io
+## Set Up Your Blog at Github.io
 
 I choose Chirpy as my theme, if you are the same, you can visit [Getting start with Chirpy](https://chirpy.cotes.page/posts/getting-started/) for more information.
 
@@ -153,4 +153,4 @@ end
 > You might need to excuse `gem install stringex` first before using `Rakefile`.
 {: .prompt-tip }
 
-## Have a nice day!
+Have a nice day!
