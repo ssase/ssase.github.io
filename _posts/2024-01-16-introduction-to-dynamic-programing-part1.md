@@ -31,13 +31,13 @@ Each time you can either climb 1 or 2 steps. In how many distinct ways can you c
 Every time you can choose **1** or **2** steps, so it's natural to think of building a binary tree in which the two paths refer to 2 kinds of steps. We assume the number **n** is 3, then the tree can be illustrated as below.
 
 ```mermaid
-stateDiagram-v2
-    1.n=3 --> 1.n=2: step=1
-    1.n=3 --> 2.n=1: step=2
-    1.n=2 --> 1.n=1: step=1
-    1.n=1 --> 1.n=0: step=1
-    1.n=2 --> 2.n=0: step=2
-    2.n=1 --> 3.n=0: step=1
+graph
+    1((n=3)) --step=1--> 2((n=2))
+    1 --step=2--> 3((n=1))
+    2 --step=1--> 4((n=1))
+    2 --step=2--> 5((n=0))
+    3 --step=1--> 6((n=0))
+    4 --step=1--> 7((n=0))
 ```
 
 And now, it's easy to know that the answer is the number of the tree's leaves. Then it can be written down as below.
