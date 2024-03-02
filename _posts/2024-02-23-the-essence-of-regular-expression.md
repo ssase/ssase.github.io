@@ -54,7 +54,7 @@ stateDiagram
 
 And we just get a simple finite automaton.
 
-### Deterministic Finite Automaton (DFA)
+### Deterministic Finite Automaton (*DFA*)
 
 Here is a more abstract diagram.
 
@@ -101,7 +101,7 @@ So, $M_1$ can be defined as $(Q, \Sigma, \delta, q_0, F)$, and:
 4. $q_1$ is a **start state**
 5. $F = \{q_2\}$
 
-### Nondeterministic Finite Automaton (NFA)
+### Nondeterministic Finite Automaton (*NFA*)
 
 Here is a simple *NFA* $N_1$:
 
@@ -159,7 +159,7 @@ So, $N_1$ can be defined as $(Q, \Sigma, \delta, q_0, F)$, and:
 4. $q_0=\{q_1\}$
 5. $F = \{q_2\}$
 
-### Relationship Between DFA and NFA
+### Relationship Between *DFA* and *NFA*
 
 > **THEOREM 1**: Given an *NFA*, we can always find a *DFA* which is able to recognize the same language.
 
@@ -173,9 +173,34 @@ Assuming an *NFA* 5-tuple is $(Q_1, \Sigma_1, \delta_1, q_1, F_1)$, then we can 
 4. $q_2 = \{q_1\}$
 5. $F_2 = \{A\ |\ A \subseteq Q_2\ and\ at\ least\ one\  a\in A,\ a\in F_1 \}$
 
-However, we haven't discussed about $\varepsilon$ above, when we calculate $\delta_2$, assuming the result is **S**, we neet to consider every $a \in S$, if $A=\delta_1(a,\varepsilon)\ and\ A\neq \varnothing$, then we ought to take all $a^, \in$ these $A$ into the result $S$, and also, considering $A^, =\delta_1(a^, ,\varepsilon)$ still matters. We should do these same steps until there's no more $A\neq \varnothing$.
+However, we haven't discussed about $\varepsilon$ above, when we calculate $\delta_2$, assuming the result is **S**, we need to consider every $a \in S$, if $A=\delta_1(a,\varepsilon)\ and\ A\neq \varnothing$, then we ought to take all $a^, \in$ these $A$ into the result $S$, and also, considering $A^, =\delta_1(a^, ,\varepsilon)$ still matters. We should do these same steps until there's no more $A\neq \varnothing$.
+
+Let's take a look at the $N_1$ discussed in [NFA](#nondeterministic-finite-automaton-nfa) above, its **start state** is *q1*, but there is an $\varepsilon$ pointer starting from *q1* to *q2*, so at a *DFA*, its **start state** is *{q1,q2}*.
+
+Now we can easily transfer $N_1$ into a *DFA* like this:
+```mermaid
+graph LR
+    q(( )) --> q2((q1,q2))
+    q2 --0,1--> q2
+    q1((q1)) --0,1--> q2
+```
+
+And there's no way to get into *q1*, so we can simplify the *DFA* as below:
+```mermaid
+graph LR
+    q(( )) --> q2((q1,q2))
+    q2 --0,1--> q2
+```
+
+As we can see, this *DFA* can recognize the same language as $N_1$.
+
+### Generalized Nondeterministic Finite Automaton (*GNFA*)
+
+<!-- By now, we've learnt 2 types of *finite automaton*, and there are also another types, you can read *push down automaton* hear. -->
 
 ## Dive Into Regular Expression
+
+As we discussed in [What's in Regular Expression](#whats-in-regular-expression), ,we introduced *regular language* and *regular operation*, at this section, we will focus on them.
 
 ### Regular Language
 
@@ -188,24 +213,22 @@ Then we say $M$ *accepts* w.
 
 If $A = \{w|M\ accepts\ w\}$, then **M recognizes w**.
 
-> **THEOREM 1**: If a language can be recognized by a *DFA*, it is called **regular language**
+> **THEOREM 2**: If a language can be recognized by a *DFA*, it is called **regular language**
 
 ### Regular Operation
 
 We define **regular operation**s as below:
-1. union: $A \cup B = \{x | x \in A \ or \ x \in B\}$
-2. concatenation: $A ○ B = \{xy | x \in A \ and \ y \in B\}$
+1. union: $A \cup B = \{x\ |\ x \in A \ or \ x \in B\}$
+2. concatenation: $A ○ B = \{xy\ |\ x \in A \ and \ y \in B\}$
 3. star: $A^* = \{x_1x_2\cdots x_k \ | \ k \geq \ 0 \ and\ x_i \in A \}$
 
 As a mathematic operation's result is also a number, we need to prove a regular operation's result is still a regular language.
 
 #### Union
 
-> **THEOREM 2**: If $A_1$ and $A_2$ are regular languages, then $A_1 \cup A_2$ is a regular language.
+> **THEOREM 3**: If $A_1$ and $A_2$ are regular languages, then $A_1 \cup A_2$ is a regular language.
 
-[TODO: 链接到DFA那一段]
-
-As we discussed in **DFA**, we know that there is a $M_1$ and a $M_2$ can recognize $A_1$ and $A_2$ separately, since we want to prove that *$A_1 \cup A_2$ is a regular language*, then we need to prove that *there is a $M$ who can recognize $A_1 \cup A_2$*.
+As we discussed in [DFA](#deterministic-finite-automaton-dfa), we know that there is a $M_1$ and a $M_2$ can recognize $A_1$ and $A_2$ separately, since we want to prove that *$A_1 \cup A_2$ is a regular language*, then we need to prove that *there is a $M$ who can recognize $A_1 \cup A_2$*.
 
 Let's define $M_1$ as $(Q_1, \Sigma_1, \delta_1, q_1, F_1)$, $M_2$ as $(Q_2, \Sigma_2, \delta_2, q_2, F_2)$ and $M$ as $(Q, \Sigma, \delta, q_0, F)$, then we can figure $M$ out as below:
 1. $Q = \{(r_1, r_2)\ |\ r1\in Q_1 \ and \ r_2 \in Q_2\}$
@@ -216,10 +239,81 @@ Let's define $M_1$ as $(Q_1, \Sigma_1, \delta_1, q_1, F_1)$, $M_2$ as $(Q_2, \Si
 
 For now, we've generated a DFA $M$ recognizing language $A_1 \cup A_2$ which means the result of $A_1 \cup A_2$ is still a **regular language**.
 
+If we use *NFA*, it will be easier to understand, assuming $N_1$ and $N_2$ can recognize $A_1$ and $A_2$ separately, we can construct $N$ to recognize $A_1 \cup A_2$ as below:
+
+```mermaid
+graph LR
+    q(( )) --ε--> q1((N1))
+    q(( )) --ε--> q2((N2))
+```
+
+> Pointers should point to $N_1$ and $N_2$'s **start state**.
+{: .prompt-tip }
+
+We let the $N$ itself to deduce whether $N_1$ or $N_2$ can recognzie the new language.
+
 #### Concatenation
 
-> **THEOREM 3**: If $A_1$ and $A_2$ are regular languages, then $A_1 ○ A_2$ is a regular language.
+> **THEOREM 4**: If $A_1$ and $A_2$ are regular languages, then $A_1 ○ A_2$ is a regular language.
+
+Assuming $N_1$ and $N_2$ can recognize $A_1$ and $A_2$ separately, using $N_1$ and $N_2$, we can construct another *NFA* $N$ as illustrated below:
+
+```mermaid
+graph LR
+    q(( )) --> q1((N1))
+    q1 --ε--> q2((N2))
+```
+
+> The pointer with $\varepsilon$ should start from $N_1$'s **accept state**s and point to $N_2$'s **start state**.
+{: .prompt-tip }
 
 #### Star
 
-> **THEOREM 4**: If $A$ is a regular language, then $A^*$ is a regular language.
+> **THEOREM 5**: If $A$ is a regular language, then $A^*$ is a regular language.
+
+Assuming $N$ can recognize $A$, with $N$, we can construct another *NFA* $N^,$ as illustrated below:
+
+```mermaid
+graph LR
+    q(( )) --> q1((N))
+    q1 --ε--> q1
+```
+
+> The pointer with $\varepsilon$ should start from $N$'s **accept state**s and point to $N$'s **start state**.
+{: .prompt-tip }
+
+### Regular Expression
+
+> **THEOREM 6**: We say R is a regular expression, if R is:
+1. $a,\ a \in \Sigma$
+2. $\varepsilon$
+3. $\varnothing$
+4. $(R_1 \cup R_2),\ R_1\ and\ R_2$ are regular expressions.
+5. $(R_1 ○ R_2),\ R_1\ and\ R_2$ are regular expressions.
+6. $(R_1^*),\ R_1$ is a regular expression.
+
+Assuming $L(R)$ is the language that expression R can recognize. So, given a regular expression $[ab]*[cd]$, we can have some basic languages:
+1. $L(R_1) = a$
+2. $L(R_2) = b$
+3. $L(R_3) = c$
+4. $L(R_4) = d$
+
+Then they can be put together like this: $((R_1 \cup R_2)*)\ ○\ (R_3 \cup R_4)$ which is the same as $[ab]*[cd]$. And no matter how complicated the expression is, it can always be traslated into the $L(R)$ format as above which is just another form of **regular expression**.
+
+> **THEOREM 7**: A language is regular, if and only if we can use regular expression to describe it.
+
+To prove this theorem, we need to prove it in two directions, and they can be discribed as two lemmas.
+
+> **LEMMA 1**: If a language can be discribed with a regular expression, then it is regular.
+
+Assuming the expression is R, and R may have regular operations, as being proved in [Regular Operation](#regular-expression), we can always construct a *DFA* to recognize it, and with **THEOREM 2** in [Regular Language](#regular-language), **LEMMA 1** is proved.
+
+> **LEMMA 2**: If a language is regular, then it can be discribed with a regular expression.
+
+When a language is regular, we can find a *DFA* recognizing it. But before introducing how a *DFA* transfers into a regular expression, we need to konw another finite automaton *GNFA*.
+
+With **LEMMA 1** and **LEMMA 2**, we have proved **THEOREM 7**.
+
+So, to recognize the language a regular expression referring to, we just need to implement a *DFA*. If you want to know how to implement a *DFA*, you can read Implement a Tiny Regular Expression.
+
+[1] [Michael Sipser] Introduction to the Theory of Computation
