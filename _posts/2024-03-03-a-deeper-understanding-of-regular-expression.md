@@ -415,6 +415,6 @@ When a language is regular, we can find a *DFA* recognizing it. To figure out ho
 
 With **LEMMA 1** and **LEMMA 2**, we have proved **THEOREM 7**.
 
-So, to recognize the language a regular expression referring to, we just need to implement a *DFA*. If you want to know how to implement a *DFA*, you can read [Implement a Tiny Regular Expression](TODO).
+So, to recognize the language a regular expression referring to, we just need to implement a *DFA*. If you want to know how to implement a *DFA*, you can read Implement a Tiny Regular Expression.
 
 In the end, let me introduce a good book, Michael Sipser's "Introduction to the Theory of Computation", I learnt a lot about the finite automaton from it.
