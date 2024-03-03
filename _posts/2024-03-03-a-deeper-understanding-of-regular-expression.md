@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "A Deeper Understanding of Regular Expression"
-date: 2024-02-23 16:44:06 +0800
+date: 2024-03-03 21:00:22 +0800
 published: true
 categories: [Finite Automaton]
 tags: [regular expression]
@@ -169,9 +169,10 @@ Assuming an *NFA* 5-tuple is $(Q_1, \Sigma_1, \delta_1, q_1, F_1)$, then we can 
 
 1. $Q_2 = P(Q_1)$
 2. $\Sigma_2 = \Sigma_1$
-3. For $A \subseteq Q_2\ and\ r \in \Sigma_2,\ \delta_2(A,r) =  \underset {a\in A} \cup \delta_1(a,r)$, which means for each $a \in A$, first we get $S = \delta_1(a,r)$, then we will have these sets: $S_1,S_2\cdots S_n(n=|A|)$, in the end, we get the result $S = \{a\ |\ a\in S_1\ or\ a\in S_2 \cdots \ or\ a\in S_n\}$
+3. For $A \subseteq Q_2\ and\ r \in \Sigma_2,\ \delta_2(A,r) =  \underset {a\in A} \cup \delta_1(a,r)$, 
+which means for each $a \in A$, first we get $S = \delta_1(a,r)$, then we will have these sets: $S_1,S_2\cdots S_n(n=|A|)$, in the end, we get the result $S = \{a\ |\ a\in S_1\ or\ a\in S_2 \cdots \ or\ a\in S_n\}$
 4. $q_2 = \{q_1\}$
-5. $F_2 = \{A\ |\ A \subseteq Q_2\ and\ at\ least\ one\  a\in A,\ a\in F_1 \}$
+5. $F_2 = \{A \ | \ A \subseteq Q_2 \ and \ at \ least \ one \  a \in A, \ a \in F_1 \}$
 
 However, we haven't discussed about $\varepsilon$ above, when we calculate $\delta_2$, assuming the result is **S**, we need to consider every $a \in S$, if $A=\delta_1(a,\varepsilon)\ and\ A\neq \varnothing$, then we ought to take all $a^, \in$ these $A$ into the result $S$, and also, considering $A^, =\delta_1(a^, ,\varepsilon)$ still matters. We should do these same steps until there's no more $A\neq \varnothing$.
 
