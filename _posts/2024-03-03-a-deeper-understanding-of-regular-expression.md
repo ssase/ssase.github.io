@@ -142,7 +142,8 @@ In a *DFA*, the result of transition function $\delta$ is always a single state 
 Like a *DFA*, we can also define the *NFA* as a 5-tuple, $(Q, \Sigma, \delta, q_0, F)$, and:
 1. $Q$ is a finite set called **state set**.
 2. $\Sigma$ is a finite set called **alphabet**.
-3. $\delta: Q \times \Sigma_\varepsilon \rightarrow P(Q)$ is a **transition function**, and $\Sigma_\varepsilon = \Sigma \cup \varepsilon, P(Q) = \{A\ |\ A \subseteq Q\}$ AKA **power set**.
+3. $\delta: Q \times \Sigma_\varepsilon \rightarrow P(Q)$ 
+is a **transition function**, and $\Sigma_\varepsilon = \Sigma \cup \varepsilon, P(Q) = \{A\ |\ A \subseteq Q\}$ AKA **power set**.
 4. $q_0 \in Q$ is a **start state**.
 5. $F \subseteq Q$ is a **set of accept states**.
 
@@ -172,7 +173,8 @@ Assuming an *NFA* 5-tuple is $(Q_1, \Sigma_1, \delta_1, q_1, F_1)$, then we can 
 3. For $A \subseteq Q_2\ and\ r \in \Sigma_2,\ \delta_2(A,r) =  \underset {a\in A} \cup \delta_1(a,r)$, 
 which means for each $a \in A$, first we get $S = \delta_1(a,r)$, then we will have these sets: $S_1,S_2\cdots S_n(n=|A|)$, in the end, we get the result $S = \{a\ |\ a\in S_1\ or\ a\in S_2 \cdots \ or\ a\in S_n\}$
 4. $q_2 = \{q_1\}$
-5. $F_2 = \{A \ | \ A \subseteq Q_2 \ and \ at \ least \ one \  a \in A, \ a \in F_1 \}$
+5. $F_2 = \{A \ | \ A \subseteq Q_2 
+\ and \ at \ least \ one \  a \in A, \ a \in F_1 \}$
 
 However, we haven't discussed about $\varepsilon$ above, when we calculate $\delta_2$, assuming the result is **S**, we need to consider every $a \in S$, if $A=\delta_1(a,\varepsilon)\ and\ A\neq \varnothing$, then we ought to take all $a^, \in$ these $A$ into the result $S$, and also, considering $A^, =\delta_1(a^, ,\varepsilon)$ still matters. We should do these same steps until there's no more $A\neq \varnothing$.
 
@@ -302,16 +304,22 @@ Assuming $M = (Q, \Sigma, \delta, q_0, F)$  is a *DFA*, $w=w_0w_1 \cdots w_n (w_
 
 Then we say $M$ *accepts* w.
 
-If $A = \{w|M\ accepts\ w\}$, then **M recognizes w**.
+If $A = \{w|M\ accepts\ w\}$, 
+then **M recognizes w**.
 
 > **THEOREM 2**: If a language can be recognized by a *DFA*, it is called **regular language**
 
 ### Regular Operation
 
 We define **regular operation**s as below:
-1. union: $A \cup B = \{x\ |\ x \in A \ or \ x \in B\}$
-2. concatenation: $A ○ B = \{xy\ |\ x \in A \ and \ y \in B\}$
-3. star: $A^* = \{x_1x_2\cdots x_k \ | \ k \geq \ 0 \ and\ x_i \in A \}$
+1. union: 
+$A \cup B = \{x\ |\ x \in A \ or \ x \in B\}$
+
+2. concatenation: 
+$A ○ B = \{xy\ |\ x \in A \ and \ y \in B\}$
+
+3. star: 
+$A^* = \{x_1x_2\cdots x_k \ | \ k \geq \ 0 \ and\ x_i \in A \}$
 
 As a mathematic operation's result is also a number, we need to prove a regular operation's result is still a regular language.
 
@@ -322,11 +330,13 @@ As a mathematic operation's result is also a number, we need to prove a regular 
 As we discussed in [DFA](#deterministic-finite-automaton-dfa), we know that there is a $M_1$ and a $M_2$ can recognize $A_1$ and $A_2$ separately, since we want to prove that *$A_1 \cup A_2$ is a regular language*, then we need to prove that *there is a $M$ who can recognize $A_1 \cup A_2$*.
 
 Let's define $M_1$ as $(Q_1, \Sigma_1, \delta_1, q_1, F_1)$, $M_2$ as $(Q_2, \Sigma_2, \delta_2, q_2, F_2)$ and $M$ as $(Q, \Sigma, \delta, q_0, F)$, then we can figure $M$ out as below:
-1. $Q = \{(r_1, r_2)\ |\ r1\in Q_1 \ and \ r_2 \in Q_2\}$
+1. $Q = \{(r_1, r_2)\ |\ r1\in Q_1 
+\ and \ r_2 \in Q_2\}$
 2. $\Sigma = \Sigma_1 \cup \Sigma_2$
 3. for $(r_1,r_2) \in Q \ and \ a \in \Sigma$, then $\delta((r_1, r_2), a) = (\delta_1(r_1, a), \delta_2(r_2, a))$
 4. $q_0 = (q_1,q_2)$
-5. $F = \{(r_1,r_2) \ |\ r_1 \in F_1 \ or \ r_2 \in F_2\}$
+5. $F = \{(r_1,r_2) \ |
+\ r_1 \in F_1 \ or \ r_2 \in F_2\}$
 
 For now, we've generated a DFA $M$ recognizing language $A_1 \cup A_2$ which means the result of $A_1 \cup A_2$ is still a **regular language**.
 
@@ -405,6 +415,6 @@ When a language is regular, we can find a *DFA* recognizing it. To figure out ho
 
 With **LEMMA 1** and **LEMMA 2**, we have proved **THEOREM 7**.
 
-So, to recognize the language a regular expression referring to, we just need to implement a *DFA*. If you want to know how to implement a *DFA*, you can read Implement a Tiny Regular Expression.
+So, to recognize the language a regular expression referring to, we just need to implement a *DFA*. If you want to know how to implement a *DFA*, you can read [Implement a Tiny Regular Expression](TODO).
 
-[1] [Michael Sipser] Introduction to the Theory of Computation
+In the end, let me introduce a good book, Michael Sipser's "Introduction to the Theory of Computation", I learnt a lot about the finite automaton from it.
