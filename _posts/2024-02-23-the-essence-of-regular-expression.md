@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "The Essence of Regular Expression"
+title: "A Deeper Understanding of Regular Expression"
 date: 2024-02-23 16:44:06 +0800
 published: true
 categories: [Finite Automaton]
@@ -196,6 +196,96 @@ As we can see, this *DFA* can recognize the same language as $N_1$.
 
 ### Generalized Nondeterministic Finite Automaton (*GNFA*)
 
+The biggest difference between a *GNFA* and an *NFA* is the *GNFA* can not only receive a single $char \in \Sigma$ or an $\varepsilon$, but also receive a regular expression. A simple *GNFA* can be like below:
+
+```mermaid
+graph LR
+    q(( )) --> q1((s))
+    q1 --(a∪b)--> q2((q1))
+    q2 --a*-->q3(((a)))
+```
+
+We define *GNFA* as a 5-tuple, $(Q, \Sigma, \delta, q_{start}, q_{accept})$, and:
+1. $Q$ is a finite set called **state set**.
+2. $\Sigma$ is a finite set called **alphabet**.
+3. $\delta: (Q-{q_{accept}}) \times (Q-{q_{start}}) \rightarrow R$ is a **transition function**.
+4. $q_{start} \in Q$ is a **start state**.
+5. $q_{accept} \in Q$ is an **accept state**.
+
+And we can define a CONVERT(G) to transform a *DFA* to a *GNFA*:
+1. Assuming $k$ is the count of G's states.
+2. If $k=2$, then G consists of a start state, an accept state and a pointer which is marked with a regular expression $R$. And this $R$ is what we need.
+3. if $k>2$, choose a state $q_{rip} \in (Q-\{q_{start}, q_{accept}\})$, define $G^,$ as a *GNFA* $(G^,, \Sigma, \delta^,, q_{start}, q_{accept})$, and $Q^,=Q-\{q_{rip}\}$, for every $q_i \in Q^,-\{q_{start}\}$ and $q_j \in Q^,-\{q_{accept}\}$, let $\delta^,(q_i, q_j) = (R_1)(R_2)*(R_3)\cup(R_4)$ ( $R_1=\delta(q_i, q_{rip}), R_2=\delta(q_{rip},q_{rip}), R_3=\delta(q_{rip},q_j), and R_4=({q_i,q_j})$ )
+4. Calculate CONVERT($G^,$), return the value.
+
+> For any *GNFA* G, CONVERT(G) = G.
+
+Given a *DFA* as below:
+
+```mermaid
+graph LR
+    q(( )) --> q1((q1))
+    q1 --a--> q2((q2))
+    q1 --b--> q3((q3))
+    q2 --a--> q2
+    q2 --b--> q4(((q4)))
+    q3 --a,b--> q4
+```
+
+We can transform it into a *GNFA* following steps below:
+
+1. Add start state and accept accept:
+```mermaid
+graph LR
+    q(( )) --> s((s))
+    s --ε--> q1((q1))
+    q1 --a--> q2((q2))
+    q1 --b--> q3((q3))
+    q2 --a--> q2
+    q2 --b--> q4(((q4)))
+    q3 --a,b--> q4
+    q4 --ε--> a((a))
+```
+
+2. Replace q2 with aa*b:
+```mermaid
+graph LR
+    q(( )) --> s((s))
+    s --ε--> q1((q1))
+    q1 --aa*b--> q4(((q4)))
+    q1 --b--> q3((q3))
+    q3 --a,b--> q4
+    q4 --ε--> a((a))
+```
+
+3. Replace q3 with b(a∪b):
+```mermaid
+graph LR
+    q(( )) --> s((s))
+    s --ε--> q1((q1))
+    q1 --aa*b--> q4(((q4)))
+    q1 --b(a∪b)--> q4
+    q4 --ε--> a((a))
+```
+
+4. Merge pointers between q1 and q4:
+```mermaid
+graph LR
+    q(( )) --> s((s))
+    s --ε--> q1((q1))
+    q1 --(aa*b)∪(b(a∪b))--> q4(((q4)))
+    q4 --ε--> a((a))
+```
+
+5. Remove q1 and a4:
+```mermaid
+graph LR
+    q(( )) --> q1((s))
+    q1 --(aa*b)∪(b(a∪b))--> q4(((a)))
+```
+
+The expression (aa*b)∪(b(a∪b)) is what we need, and it is exactly the same as the *DFA*.
+
 <!-- By now, we've learnt 2 types of *finite automaton*, and there are also another types, you can read *push down automaton* hear. -->
 
 ## Dive Into Regular Expression
@@ -310,7 +400,7 @@ Assuming the expression is R, and R may have regular operations, as being proved
 
 > **LEMMA 2**: If a language is regular, then it can be discribed with a regular expression.
 
-When a language is regular, we can find a *DFA* recognizing it. But before introducing how a *DFA* transfers into a regular expression, we need to konw another finite automaton *GNFA*.
+When a language is regular, we can find a *DFA* recognizing it. To figure out how a *DFA* transfers into a regular expression, we need another finite automaton *GNFA* introduced in [GNFA](#generalized-nondeterministic-finite-automaton-gnfa). With those steps, we can get a regular expression from a *DFA*.
 
 With **LEMMA 1** and **LEMMA 2**, we have proved **THEOREM 7**.
 
