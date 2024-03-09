@@ -4,7 +4,7 @@ title: "Set Up Your Blog At Github.io"
 date: 2024-01-15 08:30:28 +0800
 published: true
 categories: [Tutorial, Blog]
-tags: [ruby, jekyll, gitHub pages]
+tags: [jekyll, github pages]
 # The categories of each post are designed to contain up to two elements, and the number of elements in tags can be zero to infinity. 
 # TAG names should always be lowercase
 author: max

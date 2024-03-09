@@ -3,7 +3,7 @@ layout: post
 title: "A Deeper Understanding of Regular Expression"
 date: 2024-03-03 21:00:22 +0800
 published: true
-categories: [Finite Automaton]
+categories: [Computational Model, Finite Automaton]
 tags: [regular expression]
 # The categories of each post are designed to contain up to two elements, and the number of elements in tags can be zero to infinity. 
 # TAG names should always be lowercase
@@ -365,7 +365,7 @@ graph LR
     q1 --ε--> q2((N2))
 ```
 
-> The pointer with $\varepsilon$ should start from $N_1$'s **accept state**s and point to $N_2$'s **start state**.
+> The pointer with $\varepsilon$ should start from $N_1$'s **accept state**s and point to $N_2$'s **start state**. And the ○ can be omitted for convenience.
 {: .prompt-tip }
 
 #### Star
@@ -417,4 +417,4 @@ With **LEMMA 1** and **LEMMA 2**, we have proved **THEOREM 7**.
 
 So, to recognize the language a regular expression referring to, we just need to implement a *DFA*. If you want to know how to implement a *DFA*, you can read Implement a Tiny Regular Expression.
 
-In the end, let me introduce a good book, Michael Sipser's "Introduction to the Theory of Computation", I learnt a lot about the finite automaton from it.
+In the end, I want to recommand a great book, Michael Sipser's "Introduction to the Theory of Computation", from which I've learnt a lot about the finite automaton.
