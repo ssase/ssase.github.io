@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "Implement A Tiny Regular Expression"
-date: 2024-03-09 16:46:15 +0800
+date: 2024-03-09 10:46:15 +0800
 published: true
 categories: [Data Structure, Finite Automaton]
 tags: [regular expression]
