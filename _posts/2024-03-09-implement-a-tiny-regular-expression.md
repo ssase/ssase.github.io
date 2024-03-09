@@ -17,7 +17,7 @@ mermaid: true
 
 ## A Simple Example
 
-First, let's take a look at an easy regex example from LeetCode.
+First, let's take a look at an easy regex example from [LeetCode](https://leetcode.com/problems/regular-expression-matching/description/).
 
 > Given an input string s and a pattern p, implement regular expression matching with support for '.', '*' and:
 - '.' Matches any single character.​​
@@ -38,7 +38,8 @@ graph LR
 
 It has 2 states, and accepts `a`. So, it can be defined as a 5-tuple $(Q, \Sigma, \delta, q_0, F)$, and:
 1. $Q = \{0, 1\}$
-2. $\Sigma = \{a \ |\ a \in ASCII\}$
+2. $\Sigma = \{a \ |\ a \in ASCII\}
+$
 3. $\delta$ can be described as
 
 ||a|other symbols|
@@ -249,7 +250,7 @@ unordered_set<NFAState> NFA::collectEmptyCharReachableStates(unordered_set<NFASt
 And now, we can use it to locate `a` from string:
 ```c++
 NFA n = NFA(2, 0, {1}, {
-    {{'a', {1}}},
+    { {'a', {1}} },
     {},
 });
 vector<Substring> res = n.parseString(s);
@@ -296,7 +297,7 @@ void NFA::makeUnion(const NFA& n)
     vector<unordered_map<NFASymbol, unordered_set<NFAState>>> newDelta;
     unordered_map<NFASymbol, unordered_set<NFAState>> tempMap;
     unordered_set<NFAState> tempSet;
-    newDelta.push_back({{EPSILON, {startState + 1, n.startState + 1 + Q}}});
+    newDelta.push_back({ {EPSILON, {startState + 1, n.startState + 1 + Q}} });
 
     const vector<unordered_map<NFASymbol, unordered_set<NFAState>>> * deltas[] = {&delta, &n.delta};
     const NFAState addons[] = {1, Q + 1};
@@ -409,7 +410,7 @@ NFA::NFA(const NFASymbol specialSymbol)
         startState = 0;
         acceptStates = {1};
         delta = {
-            {{specialSymbol, {1}}},
+            { {specialSymbol, {1}} },
             {}
         };
     } else if (specialSymbol == '.') {
@@ -449,7 +450,7 @@ NFA::NFA(const string pattern)
             } else {
 
                 n1 = NFA(2, 0, {1}, {
-                    {{t, {1}}},
+                    { {t, {1}} },
                     {},
                 });
             }
@@ -487,7 +488,7 @@ You can get the whole codes [here](https://github.com/ssase/regex).
 
 ## What Else Do We Need
 
-As we can see, the more complex *NFA* we constructe using operations, the more redundant states it may have. So the most important action we need to take is to figure out a way to **simplify the *NFA***.
+As we can see, the more complex *NFA* we construct using operations, the more redundant states it may have. So the most important action we need to take is to figure out a way to **simplify the *NFA***.
 
 And also, we have just implemented a simple regex, we still need to make the `NFA(string pattern)` **recoginze more complicated regex** like this `[\w.%+-]+@[\w.-]+\.[a-zA-Z]+`.
 
