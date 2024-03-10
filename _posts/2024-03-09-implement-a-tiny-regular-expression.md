@@ -37,18 +37,17 @@ graph LR
 ```
 
 It has 2 states, and accepts `a`. So, it can be defined as a 5-tuple $(Q, \Sigma, \delta, q_0, F)$, and:
-1. $Q = \{0, 1\}$
-2. $\Sigma = \{a \ |\ a \in ASCII\}
-$
+1. $Q = \\{0, 1\\}$
+2. $\Sigma = \\{a \ \|\ a \in ASCII \\}$
 3. $\delta$ can be described as
 
 ||a|other symbols|
 |---|---|---|
-|$0$|$\{1\}$|$\varnothing$|
+|$0$|$\\{1\\}$|$\varnothing$|
 |$1$|$\varnothing$|$\varnothing$|
 
-4. $q_0 = \{0\}$
-5. $F = \{1\}$
+4. $q_0 = \\{0\\}$
+5. $F = \\{1\\}$
 
 Now, we can define a class `NFA` as below:
 
