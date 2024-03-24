@@ -3,7 +3,7 @@ layout: post
 title: "Implement A Tiny Regular Expression"
 date: 2024-03-09 10:46:15 +0800
 published: true
-categories: [Data Structure, Finite Automaton]
+categories: [Implementation, Finite Automaton]
 tags: [regular expression]
 # The categories of each post are designed to contain up to two elements, and the number of elements in tags can be zero to infinity. 
 # TAG names should always be lowercase
@@ -486,6 +486,8 @@ public:
 You can get the whole codes [here](https://github.com/ssase/regex).
 
 ## What Else Do We Need
+
+Due to the complexity of *NFA*, the `parseString` is too complicated, I even don't want to calculate the complexity of it. Is there **a better way to implement the *NFA***?
 
 As we can see, the more complex *NFA* we construct using operations, the more redundant states it may have. So the most important action we need to take is to figure out a way to **simplify the *NFA***.
 
