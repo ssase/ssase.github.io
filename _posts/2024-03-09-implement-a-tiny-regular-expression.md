@@ -24,11 +24,11 @@ First, let's take a look at an easy regex example from [LeetCode](https://leetco
 - '*' Matches zero or more of the preceding element.
 - The matching should cover the entire input string (not partial).
 
-As we discussed in [A Deeper Understanding of Regular Expression](https://ssase.github.io/posts/a-deeper-understanding-of-regular-expression/), in order to get selected substring with the pattern from the string, we should construct an *NFA* first.
+As we discussed in [A Deeper Understanding of Regular Expression](/posts/a-deeper-understanding-of-regular-expression/), in order to get selected substring with the pattern from the string, we should construct an *NFA* first.
 
-## Implement An Easiest *NFA* With C++
+## Define *NFA*
 
-The easiest *NFA* may be like below:
+An easiest *NFA* may be like below:
 
 ```mermaid
 graph LR
@@ -52,212 +52,19 @@ It has 2 states, and accepts `a`. So, it can be defined as a 5-tuple $(Q, \Sigma
 Now, we can define a class `NFA` as below:
 
 ```c++
-typedef unsigned int NFAState;
-typedef unsigned int NFASymbol;
-typedef pair<unsigned int, unsigned int> Substring; // pair.first means the position of string head, and pair.second means the length of string
-
 class NFA
 {
-
-private:
-    NFAState Q; // Due to all the states are numbers, we can use the count of states to represent all possible states, and the range is 0-(Q-1).
-    vector<unordered_map<NFASymbol, unordered_set<NFAState>>> delta; // The transition function running like this: nextStates = delta[currentState][receivedSymbol], user should use receive() instead
-    NFAState startState; // Normaly 0
-    unordered_set<NFAState> acceptStates;
-
-    const unordered_set<NFAState> receive(const NFAState currentState, const NFASymbol symbol);
-    bool isStartState(const NFAState state);
-    bool isAcceptState(const NFAState state);
-    bool containAcceptStates(const unordered_set<NFAState>& states);
-
-    unordered_set<NFAState> collectEmptyCharReachableStates(unordered_set<NFAState> states);
-
-public:
-    static const NFASymbol EPSILON; // To indicate an empty symbol.
-
-    NFA(const NFAState Q, const NFAState startState, const unordered_set<NFAState> acceptStates, vector<unordered_map<NFASymbol, unordered_set<NFAState>>> delta): Q(Q), startState(startState), acceptStates(acceptStates), delta(delta){}
-
-    vector<Substring> parseString(const string& str);
+    int Q; // Due to all the states are numbers, we can use the count of states to represent all possible states, and the range is 0-(Q-1).
+    set<char> Σ;
+    vector<map<char, int>> δ;
+    int q; // The start state.
+    set<int> F;
 };
 ```
 
-Its methods are easy to implement:
-```c++
-const unordered_set<NFAState> NFA::receive(const NFAState currentState, const NFASymbol symbol)
-{
-    // Don't forget some unregular situations
-    if (delta.size() > currentState && delta[currentState].contains(symbol)) {
-        return delta[currentState][symbol];
-    }
-    return {};
-}
+## Operate *NFA*
 
-bool NFA::isStartState(int state)
-{
-    return startState == state;
-}
-
-bool NFA::isAcceptState(int state)
-{
-    return acceptStates.contains(state);
-}
-
-bool NFA::isStartState(NFAState state)
-{
-    return startState == state;
-}
-
-bool NFA::isAcceptState(NFAState state)
-{
-    return acceptStates.contains(state);
-}
-
-bool NFA::containAcceptStates(const unordered_set<NFAState>& states)
-{
-    bool containAcceptStates = false;
-    for (const auto& state: acceptStates) {
-        if (states.contains(state)) {
-            containAcceptStates = true;
-            break;
-        }
-    }
-    return containAcceptStates;
-}
-
-const NFASymbol NFA::EPSILON = -1; // We use it as an ε which means empty symbol in an NFA.
-```
-
-Except `parseString` method, it is a little difficult. We can describe what we should do as below first:
-
-```mermaid
-flowchart LR
-    1(NFA state) --Judge if there's accept state--> 3{Is there?}
-    3 --YES--> 4(Store substring)
-    4 --Continue parsing--> 1
-    1 --Fetch a symbol--> 2(symbol)
-    2 --Calculate delta[state][parser]--> 1
-```
-
-Then, we can have the implementation:
-```c++
-vector<Substring> NFA::parseString(const string& str)
-{
-    const unsigned int NothingMatched = -1;
-
-    // `pair.first` means the first location of matched substring in the string, and `pair.second` means the length.
-    // `result` stores all matched substring,
-    vector<Substring> result;
-    // and `matchedSubstring` stores substring that is being analysed.
-    pair<string::const_iterator, unsigned int> matchedSubstring{str.begin(), NothingMatched};
-
-    unordered_set<NFAState> deltaResult;
-
-    // Although there is only one start state, but we should also consider ε(aka empty string), this will store the start states after considering empty string reachability.
-    unordered_set<NFAState> startStates{startState};
-
-    // Before the parsing, the NFA's states
-    unordered_set<NFAState> parsingStartStates;
-    // During parsing, we need to store the result states as splited NFAs.
-    unordered_set<NFAState> splitedNFAStates;
-
-    // And also, we need to store result states before finishing calculating states in splitedNFAStates.
-    unordered_set<NFAState> tempStates;
-    unordered_set<NFAState> emptyReachableStates;
-
-    // Follow the symbol under analysed.
-    string::const_iterator parser = str.begin();
-
-    // Calculate startStates
-    emptyReachableStates = collectEmptyCharReachableStates(startStates);
-    startStates.insert(emptyReachableStates.begin(), emptyReachableStates.end());
-    // To find out if the NFA accepts empty string.
-    if (containAcceptStates(startStates)) {
-        matchedSubstring.second = 0;
-    }
-
-    parsingStartStates = startStates;
-
-    while (parser < str.end()) {
-
-        for (const auto& state : parsingStartStates) {
-            deltaResult = receive(state, *parser);
-            tempStates.insert(deltaResult.begin(), deltaResult.end());
-        }
-        emptyReachableStates = collectEmptyCharReachableStates(tempStates);
-        tempStates.insert(emptyReachableStates.begin(), emptyReachableStates.end());
-        splitedNFAStates = tempStates;
-
-        // Clear after used.
-        tempStates.clear();
-
-        if (splitedNFAStates.empty()) {
-
-            if (parsingStartStates == startStates) {
-                parser++;
-
-            } else {
-                if (matchedSubstring.second != NothingMatched) {
-                    result.push_back({(NFAState)(matchedSubstring.first - str.begin()), matchedSubstring.second});
-                }
-                parsingStartStates = startStates;
-            }
-
-            matchedSubstring = {parser, NothingMatched};
-
-        } else {
-
-            parser++;
-            parsingStartStates = splitedNFAStates;
-
-            if (containAcceptStates(splitedNFAStates)) {
-                matchedSubstring.second = (NFAState)(parser - matchedSubstring.first);
-            }
-        }
-    }
-
-    if (matchedSubstring.second != NothingMatched) {
-        result.push_back({(NFAState)(matchedSubstring.first - str.begin()), matchedSubstring.second});
-    }
-
-    return result;
-}
-```
-
-In addition, we need `collectEmptyCharReachableStates` to collect all states which are reachable through an ε.
-```c++
-unordered_set<NFAState> NFA::collectEmptyCharReachableStates(unordered_set<NFAState> states)
-{
-    unordered_set<NFAState> result;
-    unordered_set<NFAState> temp;
-
-    while (!states.empty()) {
-        auto header = states.begin();
-        while (header != states.end()) {
-            const unordered_set<NFAState> tempResult = receive(*header, EPSILON);
-            temp.insert(tempResult.begin(), tempResult.end());
-            header++;
-        }
-        states = temp;
-        temp.clear();
-        result.insert(states.begin(), states.end());
-    }
-
-    return result;
-}
-```
-
-And now, we can use it to locate `a` from string:
-```c++
-NFA n = NFA(2, 0, {1}, {
-    { {'a', {1}} },
-    {},
-});
-vector<Substring> res = n.parseString(s);
-```
-
-## Add Operations to *NFA*
-
-According to the theory of regex we discussed before, we still need 3 operations: **union**, **concatenation**, **star**
+According to the theory of regex we discussed in [A Deeper Understanding of Regular Expression](/posts/a-deeper-understanding-of-regular-expression/), we also need 3 operations: **union**, **concatenation**, **star**
 
 ### Add Union
 
@@ -272,9 +79,10 @@ graph LR
 So, we can implement it as below:
 
 ```c++
-void makeUnion(const NFA& n);
+// First, we should define ε in NFA, and assume we won't use this value in NFA's symbols.
+const char ε = -1;
 
-void NFA::makeUnion(const NFA& n)
+void makeUnion(const NFA& n)
 {
     if (n.Q == 0) { return;}
     if (Q == 0) {
@@ -282,40 +90,37 @@ void NFA::makeUnion(const NFA& n)
         return;
     }
 
-    startState = 0;
+    // 1. Add an extra state as its new start state;
+    δ.insert(δ.begin(), {});
 
-    unordered_set<NFAState> newAcceptStates;
-    for (const auto& state: acceptStates) {
-        newAcceptStates.insert(state + 1);
-    }
-    for (const auto& state: n.acceptStates) {
-        newAcceptStates.insert(state + 1 + Q);
-    }
-    acceptStates = newAcceptStates;
+    // 2. Give the start state transitions to let it can transit to both NFAs' start state when receiving ε.
+    δ[0][ε] = {q+1, n.q+Q+1};
 
-    vector<unordered_map<NFASymbol, unordered_set<NFAState>>> newDelta;
-    unordered_map<NFASymbol, unordered_set<NFAState>> tempMap;
-    unordered_set<NFAState> tempSet;
-    newDelta.push_back({ {EPSILON, {startState + 1, n.startState + 1 + Q}} });
-
-    const vector<unordered_map<NFASymbol, unordered_set<NFAState>>> * deltas[] = {&delta, &n.delta};
-    const NFAState addons[] = {1, Q + 1};
-    for (int i = 0; i < 2; i++) {
-        for (const auto& map : *(deltas[i])) {
-            for (const auto& pair : map) {
-                for (const auto& state : pair.second) {
-                    tempSet.insert(state + addons[i]);
-                }
-                tempMap[pair.first] = tempSet;
-                tempSet.clear();
-            }
-            newDelta.push_back(tempMap);
-            tempMap.clear();
+    // 3. Update ε's states in this NFA
+    for (int i = 1; i <= Q; i++) {
+        for (auto s in δ[i]) {
+            s.second++;
         }
     }
-    delta = newDelta;
 
+    // 4. Add n's states to δ
+    for (int i = 0; i < n.Q; i++) {
+        set<int> tempmap = {};
+        for (int s: n.δ[i]) {
+            tempmap[s.first] = s.second + Q + 1;
+        }
+        δ.emplace_back(tempmap);
+    }
+
+    // 5. Update F, Q and q
+    for (int s: F) {
+        s += 1;
+    }
+    for (int s: n.F) {
+        F.insert(s + Q + 1);
+    }
     Q += n.Q + 1;
+    q = 0;
 }
 ```
 
@@ -332,9 +137,7 @@ graph LR
 And, it can be imlemented as below:
 
 ```c++
-void makeConcatenation(const NFA& n);
-
-void NFA::makeConcatenation(const NFA& n)
+void makeConcatenation(const NFA& n)
 {
     if (n.Q == 0) { return;}
     if (Q == 0) {
@@ -342,29 +145,25 @@ void NFA::makeConcatenation(const NFA& n)
         return;
     }
 
-    for (const auto& state: acceptStates) {
-        delta[state][EPSILON].insert(n.startState + Q);
+    // 1. Add to all states in F an ε transition with which can transit to n's start state.
+    for (int s: F) {
+        δ[s][ε].insert(n.q + Q);
     }
-    unordered_map<NFASymbol, unordered_set<NFAState>> tempMap;
-    unordered_set<NFAState> tempSet;
-    for (const auto& map : n.delta) {
-        for (const auto& pair : map) {
-            for (const auto& state : pair.second) {
-                tempSet.insert(state + Q);
-            }
-            tempMap[pair.first] = tempSet;
-            tempSet.clear();
+
+    // 2. Add n's states to δ
+    for (int i = 0; i < n.Q; i++) {
+        set<int> tempmap = {};
+        for (int s: n.δ[i]) {
+            tempmap[s.first] = s.second + Q;
         }
-        delta.push_back(tempMap);
-        tempMap.clear();
+        δ.emplace_back(tempmap);
     }
 
-    unordered_set<NFAState> newAcceptStates;
-    for (const auto& state: n.acceptStates) {
-        newAcceptStates.insert(state + Q);
+    // 3. Update F and Q
+    F.clear();
+    for (int s: n.F) {
+        F.insert(s + Q);
     }
-    acceptStates = newAcceptStates;
-
     Q += n.Q;
 }
 ```
@@ -382,112 +181,166 @@ graph LR
 And we can implement it as below:
 
 ```c++
-void makeStar(void);
-
-void NFA::makeStar(void)
+void makeStar(void)
 {
     if (Q == 0) { return; }
 
-    for (const auto& state: acceptStates) {
-        delta[state][EPSILON].insert(startState);
+    // 1. Add to all states in F the ε transition
+    for (int s: F) {
+        δ[s][ε].insert(q);
     }
-    acceptStates = {startState};
+
+    // 2. Update F
+    F = {q};
 }
 ```
 
-Now, we can add another constructors to NFA for convenience:
+## Use *NFA*
+
+Because the *NFA*'s transition result (AKA δ[state][symbol]) is a set, we need to collect all possible states in each trasition including those ε-reachable states.
+
+### Calculate ε-Reachable States
 
 ```c++
-NFA(): NFA(0, 0, {}, {}){}
-NFA(const NFASymbol specialSymbol);
-NFA(const string pattern); // Init an NFA with a simple regex
-
-NFA::NFA(const NFASymbol specialSymbol)
+set<int> calculateEpsilonReachableStates(const set<int>& states)
 {
-    if ((specialSymbol >= 'a' && specialSymbol <= 'z') || (specialSymbol >= 'A' && specialSymbol <= 'Z')) {
-        Q = 2;
-        startState = 0;
-        acceptStates = {1};
-        delta = {
-            { {specialSymbol, {1}} },
-            {}
-        };
-    } else if (specialSymbol == '.') {
-        Q = 2;
-        startState = 0;
-        acceptStates = {1};
-        delta = {
-            {},
-            {}
-        };
-        for (char c = 'a'; c <= 'z'; c++) {
-            delta[0][c] = {1};
+    set<int> res = states;
+    queue<int> statesNeedCalculate = states;
+    while(!statesNeedCalculate.empty()) {
+        int s = statesNeedCalculate.front();
+        statesNeedCalculate.pop();
+        res.insert(s);
+        if (δ[s].contains(ε)) {
+            const set<int>& temp = δ[s].at(ε);
+            for (int i: temp) {
+                if (!res.contains(s) {
+                    statesNeedCalculate.push(i);
+                }
+            }
         }
-    } else {
-        Q = 0;
-        startState = 0;
-        acceptStates = {};
-        delta = {};
     }
+    return res;
+}
+```
+
+### Update Current States With Charactor Received
+```c++
+// 1. Add currentStates to NFA to store states after receiving a symbol
+set<int> currentStates;
+
+void receive(char c)
+{
+    set<int> res;
+    for (int s: currentStates) {
+        if (δ[s].contains(c)) {
+            res.insert(δ[s][c].begin(), δ[s][c].end());
+        }
+    }
+    currentStates = calculateEpsilonReachableStates(res);
 }
 
-NFA::NFA(const string pattern)
+```
+
+### Recognize String
+
+```c++
+bool recognize(const string& str)
 {
-    *this = NFA{};
-    NFA n1;
-    NFA m{'.'};
+    // Reset currentStates before recognizing.
+    currentStates = calculateEpsilonReachableStates({q});
 
-    char t = '*';
-
-    for (auto i = pattern.begin(); i <= pattern.end(); i++) {
-
-        if (t != '*') {
-
-            if (t == '.') {
-                n1 = m;
-
-            } else {
-
-                n1 = NFA(2, 0, {1}, {
-                    { {t, {1}} },
-                    {},
-                });
-            }
-
-            if (*i == '*') {
-                n1.makeStar();
-            }
-
-            this->makeConcatenation(n1);
-        }
-
-        t = *i;
+    for (char c: str) {
+        receive(c);
     }
+
+    // If the final currentStates contains state in F, then the string is accepted which means the NFA can recognize the sring.
+    return containsAcceptStates(currentStates);
+}
+
+bool containsAcceptStates(const set<int>& states)
+{
+    for (int s: F) {
+        if (states.contains(s)) {
+            return true;
+        }
+    }
+    return false;
 }
 ```
 
 ## Finish The Example
 
-Finally, we get the answer:
+### Add Constructors
+```c++
+NFA(): NFA(0, {}, {}, 0, {}) {
+    for (char c = 0; c < ε; c++) {
+        Σ.insert(c);
+    }
+}
+
+NFA(int Q, set<char> Σ, vector<map<char, int>> δ, int q, set<int> F): Q(Q), Σ(Σ), δ(δ), q(q), F(F) {}
+
+NFA(const char symbol): NFA()
+{
+    if ((symbol >= 'a' && symbol <= 'z') || (symbol >= 'A' && symbol <= 'Z')) {
+        Q = 2;
+        q = 0;
+        F = {1};
+        δ = {
+            {{symbol, {1}}},
+            {}
+        };
+    } else if (symbol == '.') {
+        Q = 2;
+        q = 0;
+        F = {1};
+        δ = {
+            {},
+            {}
+        };
+        for (char c = 'a'; c <= 'z'; c++) {
+            δ[0][c] = {1};
+        }
+    }
+}
+
+// Init an NFA with a regex
+NFA(const string& pattern): NFA()
+{
+    NFA n;
+    char t = '*';
+    for (auto i = pattern.begin(); i <= pattern.end(); i++) {
+        if (t != '*') {
+            if (t == '.') {
+                n = NFA{'.'};
+            } else {
+                n = NFA(t);
+            }
+            if (*i == '*') {
+                n.makeStar();
+            }
+            makeConcatenation(n);
+        }
+        t = *i;
+    }
+}
+```
+
+### Finally, We Get the Answer
 
 ```c++
 class Solution {
 public:
     bool isMatch(string s, string p) {
-
         NFA n = NFA(p);
-        vector<Substring> res = n.parseString(s);
-
-        return !res.empty() && res[0].second == s.size();
+        return n.recognize(s);
     }
 };
 ```
 
-You can get the whole codes [here](https://github.com/ssase/regex).
+You can get the whole code [here](https://github.com/ssase/regex).
 
 ## What Else Do We Need
-
-Due to the complexity of *NFA*, the `parseString` is too complicated, I even don't want to calculate the complexity of it. Is there **a better way to implement the *NFA***?
 
 As we can see, the more complex *NFA* we construct using operations, the more redundant states it may have. So the most important action we need to take is to figure out a way to **simplify the *NFA***.
 
