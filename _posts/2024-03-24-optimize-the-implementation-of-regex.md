@@ -17,4 +17,16 @@ mermaid: true
 
 ## A Better Way to Implement the *NFA*
 
+analyse the complexity of old implementation.
+and new how?
+
 ## Simplify the *NFA*
+
+transform NFA to DFA
+
+
+
+reduce the count of DFA's states
+
+transform DFA to NFA, remove terminal state
+
