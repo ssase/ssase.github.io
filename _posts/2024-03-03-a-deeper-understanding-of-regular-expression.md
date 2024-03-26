@@ -4,7 +4,7 @@ title: "A Deeper Understanding of Regular Expression"
 date: 2024-03-03 21:00:22 +0800
 published: true
 categories: [Computer Theory, Finite Automaton]
-tags: [regular expression]
+tags: [finite automaton, regular expression]
 # The categories of each post are designed to contain up to two elements, and the number of elements in tags can be zero to infinity. 
 # TAG names should always be lowercase
 author: max

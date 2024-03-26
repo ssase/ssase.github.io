@@ -4,7 +4,7 @@ title: "Optimize the Implementation of Regex"
 date: 2024-03-24 16:10:58 +0800
 published: true
 categories: [Implementation, Finite Automaton]
-tags: [regular expression]
+tags: [finite automaton, regular expression]
 # The categories of each post are designed to contain up to two elements, and the number of elements in tags can be zero to infinity. 
 # TAG names should always be lowercase
 author: max

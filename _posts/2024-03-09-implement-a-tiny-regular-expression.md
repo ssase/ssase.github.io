@@ -4,7 +4,7 @@ title: "Implement A Tiny Regular Expression"
 date: 2024-03-09 10:46:15 +0800
 published: true
 categories: [Implementation, Finite Automaton]
-tags: [regular expression]
+tags: [finite automaton, regular expression]
 # The categories of each post are designed to contain up to two elements, and the number of elements in tags can be zero to infinity. 
 # TAG names should always be lowercase
 author: max
@@ -287,7 +287,7 @@ NFA(const char symbol): NFA()
         q = 0;
         F = {1};
         δ = {
-            {{symbol, {1}}},
+            { {symbol, {1}} },
             {}
         };
     } else if (symbol == '.') {
@@ -344,7 +344,7 @@ You can get the whole code [here](https://github.com/ssase/regex).
 
 As we can see, the more complex *NFA* we construct using operations, the more redundant states it may have. So the most important action we need to take is to figure out a way to **simplify the *NFA***.
 
-And also, we have just implemented a simple regex, we still need to make the `NFA(string pattern)` **recoginze more complicated regex** like this `[\w.%+-]+@[\w.-]+\.[a-zA-Z]+`.
+And also, we have just implemented a simple regex, we still need to make the `NFA(string pattern)` **recognize more complicated regex** like this `[\w.%+-]+@[\w.-]+\.[a-zA-Z]+`.
 
 Of course, we will do these in the future.
 
