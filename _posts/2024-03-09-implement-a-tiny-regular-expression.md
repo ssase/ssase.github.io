@@ -56,7 +56,7 @@ class NFA
 {
     int Q; // Due to all the states are numbers, we can use the count of states to represent all possible states, and the range is 0-(Q-1).
     set<char> Σ;
-    vector<map<char, int>> δ;
+    vector<map<char, set<int>>> δ;
     int q; // The start state.
     set<int> F;
 };
@@ -338,7 +338,7 @@ public:
 };
 ```
 
-You can get the whole code [here](https://github.com/ssase/regex).
+You can get all codes [here](https://github.com/ssase/regex).
 
 ## What Else Do We Need
 
