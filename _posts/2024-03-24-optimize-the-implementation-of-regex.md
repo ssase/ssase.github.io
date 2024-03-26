@@ -15,7 +15,7 @@ mermaid: true
 # Mermaid is a great diagram generation tool
 ---
 
-> Before reading this article, you might want to read [Implement A Tiny Regular Expression](/posts/optimize-the-implementation-of-regex/) first for understanding more easily.
+> Before reading this article, you might want to read [Implement A Tiny Regular Expression](/posts/implement-a-tiny-regular-expression/) first for understanding more easily.
 {: .prompt-tip }
 
 ## Simplify the *NFA*
@@ -30,7 +30,7 @@ So, we can convert the *NFA* to *DFA*, then simplify the *DFA*, and finally, we 
 ```c++
 class DFA
 {
-    int Q; // Due to all the Q are numbers, we can use the count of Q to represent all possible Q, and the range is 0-(Q-1).
+    int Q; // Due to all the states are numbers, we can use the count of states to represent all possible states, and the range is 0-(Q-1).
     set<char> Σ;
     vector<map<char, int>> δ;
     int q; // The start state.
@@ -38,7 +38,7 @@ class DFA
 }
 ```
 
-## Convert NFA to DFA
+## Convert *NFA* to *DFA*
 
 According to what we discussed in [A Deeper Understanding of Regular Expression](/posts/a-deeper-understanding-of-regular-expression/#relationship-between-dfa-and-nfa), the key moving is to convert P(Q) into a single state. So let's add a constructor to *DFA*.
 
@@ -47,18 +47,18 @@ DFA::DFA(const NFA& n)
 {
     Σ = n.Σ; // Σ are just the same.
     vector<map<char, set<int>>> tempDelta; // Used to get DFA's δ
-    map<set<int>, int> N2DConverter; // A map stores the relationship between NFA's Q set and DFA's state.
+    map<set<int>, int> N2DConverter; // A map stores the relationship between NFA's states set and DFA's state.
     int stateIndex = 0; // Used to indicate current DFA's state
     queue<set<int>>> stateSetQueue = {n.calculateEpsilonReachableStates({n.q})}; // Let's start from n.q
 
     while (!stateSetQueue.empty()) {
-        set<int> Q = stateSetQueue.front();
+        set<int> states = stateSetQueue.front();
         stateSetQueue.pop();
         map<int, set<int>> tempmap;
 
         for (int c: Σ) {
             set<int> resStates;
-            for (int s: Q) {
+            for (int s: states) {
                 if (δ[s].contains(c)) {
                     resStates.insert(δ[s][c].begin(), δ[s][c].end());
                 }
@@ -70,7 +70,7 @@ DFA::DFA(const NFA& n)
             }
         }
         tempDelta.emplace(tempmap);
-        N2dConverter[Q] = stateIndex;
+        N2dConverter[states] = stateIndex;
         stateIndex++;
     }
 
@@ -83,13 +83,13 @@ DFA::DFA(const NFA& n)
 }
 ```
 
-## Reduce the Count of DFA's Q
+## Reduce the Count of *DFA*'s States
 
-1. Divide all Q into 2 groups, one consists of all accept Q, the other contains other Q;
+1. Divide all states into 2 groups, one consists of all accept states, the other contains other states;
 2. Choose a symbol from Σ, calculate the result state with the state from the same group;
 3. If a state's result state is from a different group, then put this state to a new group, if another state's result state is from the same group as this one, put it into the new group;
 4. Repeat step 2-3 until there's no new group;
-5. Update Q.
+5. Update states.
 
 ```c++
 void DFA::simplify(void)
@@ -157,11 +157,11 @@ void DFA::simplify(void)
 }
 ```
 
-## Convert DFA to NFA
+## Convert *DFA* to *NFA*
 
 Before converting, let me introduce a state called **terminal state**. for any s in Q and any c in Σ, δ[s][c] = s, then we say the s is a **terminal state**.
 
-Because the result of a DFA's δ is a single state, so we just need to transfer the single state into a set.
+Because the result of a *DFA*'s δ is a single state, so we just need to transfer the single state into a set.
 
 But pay attention to the **terminal state** in *DFA*, it should be treated as an empty set in *NFA*, which means it should be deleted.
 
