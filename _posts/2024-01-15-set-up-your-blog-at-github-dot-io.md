@@ -91,7 +91,7 @@ Visit [Jekyll Doc](https://jekyllrb.com/docs/) for more information.
 
 I choose Chirpy as my theme, if you are the same, you can visit [Getting start with Chirpy](https://chirpy.cotes.page/posts/getting-started/) for more information.
 
-Or if you do not, you can follow other theme's instruction or just visit <https://pages.github.com/>.
+Or, you can follow other theme's instruction or just visit <https://pages.github.com/>.
 
 #### Add a Rakefile to generate a new post conveniently
 

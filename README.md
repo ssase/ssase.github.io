@@ -2,13 +2,13 @@
 
 Before running local server for the first time, go to the root directory of your site and run:
 
-```bash
+```shell
 bundle
 ```
 
 ## Usage
 
-- Excuse `./tools/run.sh`
+- `./tools/run.sh` to start a web service.
 - Use `rake newpost` to add a new post.
 
 ## For more information
